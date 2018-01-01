@@ -1,0 +1,39 @@
+{% extends 'client/bases/base_client.html'%}
+
+{% block title %} Mis Proyectos {% endblock %}
+
+{% block scripts %}
+	{% load staticfiles %}
+	 <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <p>entre</p>
+    <a href="{% url 'projects:create' %}">+ Crear Proyecto</a>
+
+    {#Al heredar de listview, disponemos de un objeto llamado object_list#}
+
+    {% for project_user in object_list %}
+        <p>
+
+        {% with project_user.get_project as project %}
+
+            <a href="{% url 'projects:show' project.slug %}">{{ project.title }}</a>
+
+        {% endwith %}
+
+    {% endfor %}
+
+    {#Al heredar de listview, disponemos de un objeto llamado object_list#}
+    {% for project in object_list %}
+        <p>
+            {{ project.title }}
+        </p>
+        <a href="{% url 'projects:show' 'proyecto6'%}">{{ project.title }}</a>
+    {% endfor %}
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

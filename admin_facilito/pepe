@@ -1,0 +1,1 @@
+[{"model": "status.status", "pk": 1, "fields": {"title": "Sin Registro", "description": "Se asigna cuando el proyecto es creado.", "color": "blue", "create_date": "2017-12-16T14:36:07Z", "active": true}}, {"model": "status.status", "pk": 2, "fields": {"title": "Finalizado", "description": "Finalizado", "color": "black", "create_date": "2017-12-17T01:42:49Z", "active": true}}]

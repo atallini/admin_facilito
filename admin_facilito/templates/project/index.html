@@ -1,0 +1,25 @@
+{% extends 'client/bases/base_client.html'%}
+
+{% block title %} Mis Proyectos {% endblock %}
+
+{% block scripts %}
+	{% load staticfiles %}
+	 <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <h2>Pagina index.html</h2>
+	<h4>{{ project.title }}</h4>
+
+{% for project in object_list %}
+    <p>
+    <a href="{% url 'projects:show' project.slug %}">{{ project.title }}</a>
+{% endfor %}
+
+
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}

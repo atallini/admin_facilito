@@ -1,0 +1,33 @@
+{% extends 'client/bases/base_client.html'%}
+
+{%block title%}Editar Cuenta Usuario{%endblock%}
+
+{% block scripts %}
+	{% load staticfiles %}
+	 <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
+{% endblock %}
+
+{%block subtitle%}Editar Usuario{%endblock%}
+
+{%block content%}
+<div class = "class_container_form" >
+
+    <div class="collection">
+        <a href="{% url 'client:edit' %}" class="collection-item active">Perfil</a>
+        <a href="{% url 'client:edit_password' %}" class="collection-item">Password</a>
+    <a href="{% url 'client:edit_social' %}" class="collection-item">Redes Sociales</a>
+    </div>
+
+<form method="post" action="">
+
+    {% csrf_token %}
+    {% include 'includes/_forms.html' with form=form_user %}
+    {% include 'includes/_forms.html' with form=form_client %}
+
+    <input class="btn #9e9e9e grey" type="submit" value="Actualizar Usuario">
+
+</form>
+</div>
+
+{%endblock%}
+

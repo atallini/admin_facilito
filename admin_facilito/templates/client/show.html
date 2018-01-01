@@ -1,0 +1,38 @@
+{% load client_extras %}
+
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title> {{ user.username }}</title>
+</head>
+<body>
+
+<h1>Hola Usuario {{ user.username|title }}</h1>
+
+<p>Comentarios:  </p>
+<p> {{user.client.bio|truncatechars:100  }} </p>
+
+<p>{{ user.username|saluda }}</p>
+
+
+{#Este for muestra los registros del modelo socialnetwork, label y value, utilizando list_fields #}
+{#se utiliza el concepto list_view, para lograr mostrar solo los campos regulares, no PK ni FK#}
+{% if user.socialnetwork %}
+{% for field in user.socialnetwork|list_fields %}
+
+    #aqui debe crear una variable para usar en el template, en este caso se llama value
+    #utilizando with  asigno socialnetwork get value a la variable value
+    {% with user.socialnetwork|get_value:field as value %}
+        {% if value %}
+
+        <p> {{ field }} </p>
+        <p> {{ value }} </p>
+
+        {% endif %}
+    {% endwith %}
+
+{% endfor %}
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends 'client/bases/base_client.html'%}
+
+{% block title %} Colaboradores {% endblock %}
+
+{% block scripts %}
+  {% load staticfiles %}
+   <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
+    <script type="text/javascript" src="{% static 'js/search_user.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+
+    <h4>Colaboradores!</h4>
+    {% for user in object_list%}
+      <p>Usuario: {{ user.user }} Permiso : {{ user.permission }}</p>
+    {% endfor %}
+
+    <form id="search-user-form" method="GET" action="{% url 'client:filtercuatro' %}">
+        <input type="text" name="username">
+        <input type="submit" value="buscar">
+    </form>
+
+    <div id="ajax-result">
+        <ul>
+            <!-- aqui colocaremos el resultado q devuelve el js success -->
+
+        </ul>
+    </div>
+
+
+{% endblock %}
+
+{% block footer %}
+
+{% endblock %}
