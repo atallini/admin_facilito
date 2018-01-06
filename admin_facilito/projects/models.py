@@ -1,12 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
 import datetime
 from django.core.exceptions import ValidationError
-
 from django.utils import timezone
 from status.models import Status
 from django.contrib.auth.models import User
-
 
 
 # Create your models here.
@@ -37,10 +34,12 @@ class Project(models.Model):
 
     #este metodo retorno verdadero si el usuario tiene permiso, segun la tabla projectpermission
     #primero buscamos en projectuser, para saber si un usuario es colaborador del proyecto
-
     def user_has_permission(self, user):
-        return self.projectuser_set.filter(user=user, permission_id=1).count()>0
-
+        #return self.projectuser_set.filter(user=user, permission_id=1).count()>0
+        #este return seria un: select * from projectuser where permission_id IN (1,2,3)
+        return self.projectuser_set.filter(user=user,
+                                           permission_id__in=ProjectPermission.admin_permission()
+                                           ).count()>0
 
     def save(self, *args, **kwargs):
         self.validate_unique()
@@ -94,6 +93,9 @@ class ProjectUser(models.Model):
     def is_founder(self):
         return self.permission == ProjectPermission.founder_permission()
 
+    #esta funcion valida si el usuario seleccionado pude cambiar el permiso
+    #si el usuario no es fundador, devuelve true
+    #si el usuario es fundador, busca si existe otro fundador ademas de el
     def valida_change_permission(self):
         if not self.is_founder():
             return True

@@ -11,7 +11,22 @@
 {% block content %}
 
     <h4>Colaborador: {{ user.username }} </h4>
+    {% if has_permission %}
+    <p>Puedes modificar el permiso !!!</p>
+    <div>
+        <form method="POST" action="">
+            {% csrf_token %}
+            {% include "includes/_forms.html" with form=form only %}
+            <input class="btn #9e9e9e grey" type="submit" value="Actualizar">
+        </form>
+    </div>
 
+    <br>
+    <br>
+
+    <a href="{% url 'projects:delete_contributor' project.slug user.username %}">Eliminar de Colaboradores</a>
+
+    {% endif %}
 
 {% endblock %}
 

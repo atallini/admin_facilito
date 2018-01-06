@@ -3,6 +3,7 @@
 
 from django import forms
 from .models import Project
+from .models import ProjectPermission
 import datetime
 
 class CreateProjectForm(forms.ModelForm):
@@ -13,3 +14,10 @@ class CreateProjectForm(forms.ModelForm):
 	class Meta:
 		model = Project
 		fields = ('title', 'description', 'dead_line')
+
+class PermisionProject(forms.Form):
+	permission = forms.ModelChoiceField(queryset=ProjectPermission.objects.all(), initial=0)
+
+	def __init__(self, *args, **kwargs):
+		super(PermisionProject, self).__init__(*args, **kwargs)
+		self.fields['permission'].widget.attrs.update({'class':'browser-default'})

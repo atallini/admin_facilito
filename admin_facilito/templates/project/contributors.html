@@ -1,19 +1,18 @@
 {% extends 'client/bases/base_client.html'%}
 
-{% block title %} Colaboradores {% endblock %}
+{% block title %} Colaboradores 2018{% endblock %}
 
 {% block scripts %}
   {% load staticfiles %}
-   <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/forms.css' %}" />
     <script type="text/javascript" src="{% static 'js/search_user.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-
-
-    <h4>Colaboradores!</h4>
+    <h4>Colaboradores Enero 2018 !!!</h4>
     {% for user in object_list%}
-      <p>Usuario: {{ user.user }} Permiso : {{ user.permission }}</p>
+        <p>Usuario: {{ user.user }} Permiso : {{ user.permission }}</p>
+        <a href="{% url 'projects:user_contributor' project.slug user.user.username %}">Ver </a>
     {% endfor %}
 
     <form id="search-user-form" method="GET" action="{% url 'client:filtercuatro' %}">
@@ -24,11 +23,8 @@
     <div id="ajax-result">
         <ul>
             <!-- aqui colocaremos el resultado q devuelve el js success -->
-
         </ul>
     </div>
-
-
 {% endblock %}
 
 {% block footer %}

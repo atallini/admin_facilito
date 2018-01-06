@@ -10,6 +10,7 @@ from .models import Project
 from .models import ProjectUser
 from .models import ProjectPermission
 from .forms import CreateProjectForm
+from .forms import PermisionProject
 
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
@@ -103,7 +104,20 @@ class ShowClass(DetailView):
         return context
 
 
+"""
+Functions
+"""
+def admin_only(function):
+    def wrap(request, *args, **kwargs):
+        project = get_object_or_404(Project,slug=kwargs['slug'])
+        if not project.user_has_permission(request.user):
+            lazy = reverse_lazy('project:show', kwargs={'slug': project.slug})
+            return HttpResponseRedirect(lazy)
+        return function(request, *args, **kwargs)
+    return wrap
+
 @login_required(login_url='client:login')
+@admin_only
 def edit(request, slug=''):
     # Esta funcion: get_object_or_404, regresa una instancia del modelo, en este caso project
     #  o devuelve un error 404 si no se pudo encontrar el recurso en la base de datos.
@@ -112,10 +126,11 @@ def edit(request, slug=''):
     project = get_object_or_404(Project, slug=slug)
 
     #Validar que el usuario tenga permisos para acceder a edit, caso contrario, se redirige a show
+    """"
     if not project.user_has_permission(request.user):
         lazy = reverse_lazy('projects:show', kwargs={'slug':project.slug})
-
         return HttpResponseRedirect(lazy)
+    """
 
     form_project = CreateProjectForm(request.POST or None, instance = project)
     forms_status = StatusChoiceForm(request.POST or None,
@@ -146,10 +161,9 @@ def edit(request, slug=''):
 
 class ListContributorsClass(ListView):
     template_name = 'project/contributors.html'
-    print('##############################################')
+    print('##################################################')
     print('### Ingrese a la funcion  ListContributorsClass')
-    print('##############################################')
-
+    print('##################################################')
 
     def get_queryset(self):
         #se asigna a la variable project, el modelo Project mas el slug, que viene en la url
@@ -163,9 +177,10 @@ class ListContributorsClass(ListView):
 
 
 @login_required(login_url='client:login')
+@admin_only
 def add_contributor(request, slug, username):
     project = get_object_or_404(Project, slug=slug)
-    user = get_object_or_404(User, username = username)
+    user = get_object_or_404(User, username=username)
 
     print('##############################################')
     print('#### Ingrese a la funcion add_contributor')
@@ -173,34 +188,79 @@ def add_contributor(request, slug, username):
     print('usuario: ' + username)
     print('##############################################')
 
+    """"
     if not project.user_has_permission(request.user):
         lazy = reverse_lazy('projects:show', kwargs={'slug': project.slug})
         #return redirect('project:contributors', slug=project.slug)
+        print('*** Error: sali por no tener permisos para efectuar el create.')
         return HttpResponseRedirect(lazy)
+    """
 
-    #aq/ui hacemos una consulta a la base de datos, tabla projecto, y pregunto si ya existe para
+    #Aqui hacemos una consulta a la base de datos, tabla projecto, y pregunto si ya existe para
     #el proyecto un usuario asignado con ese nombre, si no existe, que lo de de alta.
+    """"
     if not project.projectuser_set.filter(user=user).exists():
         project.projectuser_set.create(user=user,
                                        permission=ProjectPermission.contributor_permission()
                                        )
+        #project.projectuser_set.user=user, permission_id=1)
+    """
+    if project.projectuser_set.filter(user=user).exists():
+        print('* Error: ya existe el usuario asignado para el proyecto.')
+    else:
+        project.projectuser_set.create(user=user,
+            permission=ProjectPermission.contributor_permission()
+            )
         #project.projectuser_set.create(user=user, permission_id=1)
+        print('* OK: Se agrego el usuario al proyecto.')
 
+    print('#############################################')
     print('### FIN DE LA FUNCION ADD_CONTRIBUTOR  99877')
     print('#############################################')
-    return redirect('projects:contributors', slug)
+
+    return redirect('projects:contributors', slug=project.slug)
 
 
 @login_required(login_url='client:login')
 def user_contributor(request, slug, username):
     project = get_object_or_404(Project, slug=slug)
     user = get_object_or_404(User, username=username)
-    has_permission = project.user_has_permission(request.user),
+    has_permission = project.user_has_permission(request.user)
+    permission = get_object_or_404(ProjectUser, user=user, project=project)
+
+    form = PermisionProject(request.POST or None,
+                            initial={'permission': permission.permission_id})
+
+    if request.method == 'POST' and form.is_valid():
+        selection_id = form.cleaned_data['permission'].id
+
+        # logica del negocio, aqui se ponen las modificaciones
+        if selection_id != permission.id and permission.valida_change_permission():
+            permission.permission_id = selection_id
+            permission.save()
+            messages.success(request, 'Datos actualizados correctamente.')
 
     context = {
                 'project':project,
                 'user': user,
                 'has_permission' : has_permission,
-            }
+                'form' : form,
+                }
 
     return render(request, 'project/contributor.html', context)
+
+
+@login_required(login_url='client:login')
+@admin_only
+def delete_contributor(request, slug, username):
+    project = get_object_or_404(Project, slug=slug)
+    user = get_object_or_404(User, username=username)
+    project_user = get_object_or_404(ProjectUser, user=user, project=project)
+
+    if not project_user.is_founder():
+        project_user.delete()
+        print('* OK: Registro eliminado.')
+    else:
+        print('* Error: no se pudo eliminar registro.')
+
+    return redirect('projects:contributors', slug=project.slug)

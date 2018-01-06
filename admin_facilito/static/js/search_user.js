@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-    alert("Hola Mundo.88")
+    //alert("Hola Mundo -> Enero 2018")
 
     $("#search-user-form").submit(function(e){
     e.preventDefault();
@@ -18,8 +18,8 @@ $(document).ready(function(){
         var link = window.location.pathname + "add/"
 
         for(let elem of json){
-          var href = link + elem.username //+ "/"
-          html+= '<li>' + elem.username + '<a href="'+ href +'"> -> agregar</a> </li>'
+          var href = link + elem.username + "/"
+          html+= '<li>' + elem.username + '<a href="'+ href +'"> -> Agregar</a> </li>'
           console.log(html)
         }
 
