@@ -17,12 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from .views import home
 from .views import error_404
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home, name='home'),
     url(r'^client/', include('clients.urls')),
     url(r'^projects/', include('projects.urls')),
-
+    url(r'^api/', include('videos.urls')),
 ]
 
 handler404 = error_404

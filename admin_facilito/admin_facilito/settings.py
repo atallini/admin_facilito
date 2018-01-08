@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'clients',
     'projects',
     'status',
+    'videos',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
